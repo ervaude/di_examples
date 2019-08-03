@@ -1,0 +1,14 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  DanielGoerz\DiExamples\Functionality\FunctionalityInterface: '@DanielGoerz\DiExamples\Functionality\A'
+  DanielGoerz\DiExamples\Functionality\FunctionalityInterface $alternativeFunctionality: '@DanielGoerz\DiExamples\Functionality\B'
+
+  DanielGoerz\DiExamples\:
+    resource: '../Classes/*'
+
+  DanielGoerz\DiExamples\Controller\DependencyInjectionController:
+    public: true
