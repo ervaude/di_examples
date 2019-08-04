@@ -5,7 +5,7 @@ $EM_CONF['di_examples'] = [
     'description' => 'Its a kind of magic',
     'category' => 'Backend',
     'author' => 'Daniel Goerz',
-    'author_email' => 'daniel.goerz@posteo.de',
+    'author_email' => 'daniel.goerz@b13.com',
     'author_company' => '',
     'shy' => '',
     'priority' => '',
@@ -20,6 +20,7 @@ $EM_CONF['di_examples'] = [
     'version' => '1.0.0',
     'constraints' => [
         'depends' => [
+            'typo3' => '>=10.0.0'
         ],
         'conflicts' => [
         ],

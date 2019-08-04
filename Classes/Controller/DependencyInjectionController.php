@@ -5,6 +5,7 @@ namespace DanielGoerz\DiExamples\Controller;
 use DanielGoerz\DiExamples\Functionality\A;
 use DanielGoerz\DiExamples\Functionality\B;
 use DanielGoerz\DiExamples\Functionality\FunctionalityInterface;
+use DanielGoerz\DiExamples\Service\EvenBetterService;
 use DanielGoerz\DiExamples\Service\VeryGoodService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -43,25 +44,44 @@ class DependencyInjectionController
     protected $alternativeFunctionality;
 
     /**
-     * @param ModuleTemplate $moduleTemplate
+     * @var EvenBetterService
+     */
+    protected $betterService;
+
+    /**
      * @param StandaloneView $view
      * @param VeryGoodService $service
      * @param FunctionalityInterface $functionality
      * @param FunctionalityInterface $alternativeFunctionality
      */
     public function __construct(
-        ModuleTemplate $moduleTemplate,
         StandaloneView $view,
         VeryGoodService $service,
         FunctionalityInterface $functionality,
         FunctionalityInterface $alternativeFunctionality)
     {
-        $this->moduleTemplate = $moduleTemplate;
         $this->view = $view;
         $this->service = $service;
         $this->functionality = $functionality;
         $this->alternativeFunctionality = $alternativeFunctionality;
         $this->initializeView('index');
+    }
+
+    /**
+     * @param EvenBetterService $service
+     * @required
+     */
+    public function setBetterService(EvenBetterService $service)
+    {
+        $this->betterService = $service;
+    }
+
+    /**
+     * @param ModuleTemplate $moduleTemplate
+     */
+    public function injectModuleTemplate(ModuleTemplate $moduleTemplate)
+    {
+        $this->moduleTemplate = $moduleTemplate;
     }
 
     /**
@@ -80,10 +100,12 @@ class DependencyInjectionController
     public function indexAction(ServerRequestInterface $request): ResponseInterface
     {
         $messages = [];
-        $messages[] = 'Service: ' . ($this->service instanceof VeryGoodService ? 'DI worked.' : 'DI did not work');
-        $messages[] = 'Service Logger: ' . ($this->service->hasLogger() ? 'DI worked.' : 'DI did not work');
-        $messages[] = 'Functionality: ' . ($this->functionality instanceof A ? 'DI worked.' : 'DI did not work');
-        $messages[] = 'Alternative Functionality: ' . ($this->alternativeFunctionality instanceof B ? 'DI worked.' : 'DI did not work');
+        $messages[] = 'Service: ' . ($this->service instanceof VeryGoodService ? 'DI worked in constrcutor.' : 'DI did not work');
+        $messages[] = 'Service Logger: ' . ($this->service->hasLogger() ? 'DI worked down the chain.' : 'DI did not work');
+        $messages[] = 'Functionality: ' . ($this->functionality instanceof A ? 'DI worked through interface.' : 'DI did not work');
+        $messages[] = 'Alternative Functionality: ' . ($this->alternativeFunctionality instanceof B ? 'DI worked through interface and argument name.' : 'DI did not work');
+        $messages[] = 'Better Service: ' . ($this->betterService instanceof EvenBetterService ? 'DI worked through setBetterService().' : 'DI did not work');
+        $messages[] = 'Module Template: ' . ($this->moduleTemplate instanceof ModuleTemplate ? 'DI worked through injectModuleTemplate().' : 'DI did not work');
         $this->view->assign('messages', $messages);
         $this->moduleTemplate->setContent($this->view->render());
         return new HtmlResponse($this->moduleTemplate->renderContent());
